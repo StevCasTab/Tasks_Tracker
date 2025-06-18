@@ -32,7 +32,7 @@ Purpose: Mark a task as completed
 
 -----  
 ### 4: Remove Task
-Purpose: Delete task from List
+Purpose: Delete task from List  
 ![image](https://github.com/user-attachments/assets/7480c9b2-0a47-4209-bb32-1cd41b1ba8dd)  
 #### After deleting task...  
 ![image](https://github.com/user-attachments/assets/99865fdb-a4e1-4580-aba0-3e0bb1605ce8)  
