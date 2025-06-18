@@ -19,7 +19,16 @@ Purpose: Add new task to list
 ![image](https://github.com/user-attachments/assets/30f99e24-dd7e-49e8-89ca-ce9c441484c3)  
 
 #### After adding new task...  
-![image](https://github.com/user-attachments/assets/dcbf2670-07c7-4daf-bbbc-1fdc4829077f)
+![image](https://github.com/user-attachments/assets/dcbf2670-07c7-4daf-bbbc-1fdc4829077f)  
 
+----- 
+### 3: Complete Task  
+Purpose: Mark a task as completed  
 
+![image](https://github.com/user-attachments/assets/9164e9a5-ad7a-4501-935a-64314c656380)  
+
+#### After marking task as completed...  
+![image](https://github.com/user-attachments/assets/19d1c38d-3396-429f-a0ae-01115ebea6b0)  
+
+-----  
 
