@@ -31,4 +31,15 @@ Purpose: Mark a task as completed
 ![image](https://github.com/user-attachments/assets/19d1c38d-3396-429f-a0ae-01115ebea6b0)  
 
 -----  
+### 4: Remove Task
+Purpose: Delete task from List
+![image](https://github.com/user-attachments/assets/7480c9b2-0a47-4209-bb32-1cd41b1ba8dd)  
+#### After deleting task...  
+![image](https://github.com/user-attachments/assets/99865fdb-a4e1-4580-aba0-3e0bb1605ce8)  
 
+-----  
+### 5: Exit
+Purpose: Exit out of application  
+![image](https://github.com/user-attachments/assets/537fed31-54b8-4beb-98a5-254b5db2a171)  
+
+-----  
