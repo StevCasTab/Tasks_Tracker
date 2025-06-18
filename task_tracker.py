@@ -61,23 +61,26 @@ def AddTask():
         
     menu()
 
-def write_Json(new_data, writeOrUpdate):
+def write_Json(mode, new_data = None, task = None):
     global tasksList
-    comamndWord = writeOrUpdate
+    comamndWord = mode
     try:
         with open(myJsonFile,'r+') as file:
             file_data = json.load(file)
-            if writeOrUpdate == 'Write':
+            if mode == 'Write':
                 comamndWord = "Writing"
                 file_data["Tasks"].append(new_data)
                 file.seek(0)
                 json.dump(file_data, file, indent=4)
-            elif writeOrUpdate == "Update":
-                commandWord = "Updating"
+            elif mode == "Update" or mode == "Delete":
                 file.seek(0)
+                if mode == "Delete":
+                    tasksList.remove(task)
                 updatedJson = {"Tasks": tasksList}
                 json.dump(updatedJson, file, indent=4)
-            tasksList = file_data["Tasks"]
+                
+            if mode != "Delete":
+                tasksList = file_data["Tasks"]
             file.truncate()
     except (json.JSONDecodeError, FileNotFoundError) as e:
         printError("Error " + comamndWord + " JSON file: " + e)    
@@ -103,9 +106,25 @@ def CompleteTask():
                     if yesNo != 'C':
                         if(yesNo == 'Y'):
                             task['completed'] = True
-                            write_Json("", "Update")
+                            write_Json("Update", None, None)
     menu()
 
+def RemoveTask():
+    print("------------------------------------------")
+    print("Please enter task ID (Type 'C' to cancel)")
+    print("------------------------------------------")
+    task_id = input()
+    if task_id != "C":
+        for task in tasksList:
+            if str(task["id"]) == task_id:
+                print("----------------------")
+                printTask(task)
+                print("Are you sure you want to delete? (Y/N) (Type 'C' to cancel)")
+                yesNo = input()
+                if yesNo != "C" and yesNo == "Y":
+                    write_Json("Delete", None, task)
+
+    menu()
 
 
 def menu():
@@ -126,6 +145,8 @@ def menu():
         AddTask()
     elif inputSel == "3":
         CompleteTask()
+    elif inputSel == "4":
+        RemoveTask()
     else:
         menu()
 
