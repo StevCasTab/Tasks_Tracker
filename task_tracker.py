@@ -2,8 +2,9 @@ import json
 from datetime import datetime
 
 tasksList = []
+myJsonFile = "tasks.json"
 
-with open("tasks.json", "r") as tasks:
+with open(myJsonFile, "r") as tasks:
     data = json.load(tasks)
 
     tasksList = data['Tasks']
@@ -24,12 +25,19 @@ def printError(message):
 def ViewTasks():
     print("------------")
     print("Tasks list")
-    print("------------")
+    print("----------------")
     for task in tasksList:
-        print(str(task['id']) + ": " + task['description'])
-        print("Due: " + task['due_date'])
-        print("----------------")
+        printTask(task)
     menu()
+
+def printTask(task):
+    print(str(task['id']) + ": " + task['description'])
+    print("Due: " + task['due_date'])
+    if(task['completed']):
+        print("Completed: Yes")
+    else:
+        print("Completed: No")
+    print("----------------")
 
 def AddTask():
     print("--------------------")
@@ -38,27 +46,66 @@ def AddTask():
     desc = input()
     if desc != "C":
         print("-----------------------------")
-        print("Enter a due date (YYYY-MM-DD)")
+        print("Enter a due date (YYYY-MM-DD) (Type 'C' to cancel)")
         print("-----------------------------")
         dDate = input()
-        try:
-            if validate(dDate):
-                newData = {"id": len(tasksList)+1,"description": desc, "due_date": dDate, "completed": False}
-                write_Json(newData)
-        except ValueError:
-            printError("Error with date")
+        if dDate != "C":
+            try:
+                if validate(dDate):
+                    max_id = max((task["id"] for task in tasksList), default=0)
+                    new_id = max_id+1
+                    newData = {"id": new_id,"description": desc, "due_date": dDate, "completed": False}
+                    write_Json(newData, "Write")
+            except ValueError:
+                printError("Error with date")
         
     menu()
 
-def write_Json(new_data, filename="tasks.json"):
+def write_Json(new_data, writeOrUpdate):
+    global tasksList
+    comamndWord = writeOrUpdate
     try:
-        with open(filename,'r+') as file:
+        with open(myJsonFile,'r+') as file:
             file_data = json.load(file)
-            file_data["Tasks"].append(new_data)
-            file.seek(0)
-            json.dump(file_data, file, indent=4)
+            if writeOrUpdate == 'Write':
+                comamndWord = "Writing"
+                file_data["Tasks"].append(new_data)
+                file.seek(0)
+                json.dump(file_data, file, indent=4)
+            elif writeOrUpdate == "Update":
+                commandWord = "Updating"
+                file.seek(0)
+                updatedJson = {"Tasks": tasksList}
+                json.dump(updatedJson, file, indent=4)
+            tasksList = file_data["Tasks"]
+            file.truncate()
     except (json.JSONDecodeError, FileNotFoundError) as e:
-        printError("Error reading or writing JSON file: " + e)    
+        printError("Error " + comamndWord + " JSON file: " + e)    
+
+
+def CompleteTask():
+    print("------------------------------------------")
+    print("Please enter task ID (Type 'C' to cancel)")
+    print("------------------------------------------")
+    task_id = input()
+    if task_id != "C":
+        for task in tasksList:
+            if str(task["id"]) == task_id:
+                if(task["completed"]):
+                   print("-------------------------")
+                   print("Task " + task_id + " is already completed")
+                   print("-------------------------")
+                else:
+                    print("----------------------")
+                    printTask(task)
+                    print("Are you sure? (Y/N) (Type 'C' to cancel)")
+                    yesNo = input()
+                    if yesNo != 'C':
+                        if(yesNo == 'Y'):
+                            task['completed'] = True
+                            write_Json("", "Update")
+    menu()
+
 
 
 def menu():
@@ -71,12 +118,16 @@ def menu():
     print("4: Remove Task")
     print("5: Exit")
     print("---------------")
-    while True:
-        inputSel = input()
-        if inputSel == "1":
-            ViewTasks()
-        elif inputSel == "2":
-            AddTask()
+   ##while True:
+    inputSel = input()
+    if inputSel == "1":
+        ViewTasks()
+    elif inputSel == "2":
+        AddTask()
+    elif inputSel == "3":
+        CompleteTask()
+    else:
+        menu()
 
 
 menu()
