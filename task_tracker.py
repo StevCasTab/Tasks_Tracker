@@ -46,16 +46,17 @@ def validate(date_text):
 
 #Print Error Message
 def printError(message):
-    print("--------------")
+    print("-----------------------------------------------")
     print("ERROR: " + message)
-    print("--------------")
+    print("-----------------------------------------------")
 
 #Print Tasks List
 def ViewTasks():
-    print("------------")
+    print("----------------")
     print("Tasks list")
     print("----------------")
     for task in tasksList:
+        print("Found task: " + str(task["id"]))
         printTask(task)
     menu()
 
@@ -71,15 +72,15 @@ def printTask(task):
 
 #Add a Task
 def AddTask():
-    print("--------------------")
+    print("----------------------------------------")
     print("Enter a description (Type 'C' to cancel)")
-    print("--------------------")
+    print("----------------------------------------")
     
     #User Enters a description for the new task
     desc = input() 
 
     #if the user did not enter the character 'C' only, proceed
-    if desc != "C":
+    if desc.lower() != "c":
         print("-----------------------------")
         print("Enter a due date (YYYY-MM-DD) (Type 'C' to cancel)")
         print("-----------------------------")
@@ -88,7 +89,7 @@ def AddTask():
         dDate = input()
 
         #if the user did not enter the character 'C' only, proceed
-        if dDate != 'C':
+        if dDate.lower() != 'c':
             #Attempt to validate the entered date
             if validate(dDate):
 
@@ -102,7 +103,7 @@ def AddTask():
                 newData = {"id": new_id,"description": desc, "due_date": dDate, "completed": False}
 
                 #Call function to write new data
-                write_Json(newData, "Write")
+                write_Json("Write", newData, None)
         
     menu()
 
@@ -117,15 +118,26 @@ def write_Json(mode, new_data = None, task = None):
 
             #If the mode is set as a 'Write' operation
             if mode == 'Write':
+                
+                #If there are currently no tasks in the list
+                if len(tasksList) == 0:
+                    #Add task to List
+                    tasksList.append(new_data)
+                    #Rewrite JSON file with new data
+                    write_Json("Update", None, None)
+                    return
+                else:
+                    #Add the new json data to the json array
+                    file_data["Tasks"].append(new_data)
 
-                #Add the new json data to the json array
-                file_data["Tasks"].append(new_data)
+                    #Return to beginning of JSON file
+                    file.seek(0)
 
-                #Return to beginning of JSON file
-                file.seek(0)
-
-                #Write updated content to the JSON file
-                json.dump(file_data, file, indent=4)
+                    #Write updated content to the JSON file
+                    json.dump(file_data, file, indent=4)
+                    
+                    #Resize file to reflect JSON array size
+                    file.truncate()
 
             #If the mode is set as either an 'Update' or 'Delete operation
             elif mode == "Update" or mode == "Delete":
@@ -142,14 +154,17 @@ def write_Json(mode, new_data = None, task = None):
 
                 #Write updated content to the JSON file
                 json.dump(updatedJson, file, indent=4)
+                
+                #Resize file to reflect JSON array size
+                file.truncate()
 
             #If the mode is not a 'Delete' operation
             if mode != "Delete":
+                file.seek(0)
+                file_data = json.load(file)
                 #Retrieve updated JSON data and update the tasks list
                 tasksList = file_data["Tasks"]
 
-            #Resize file to reflect JSON array size
-            file.truncate()
 
     #If JSON was unable to be decoded or the file was not found
     except (json.JSONDecodeError, FileNotFoundError) as e:
@@ -166,7 +181,7 @@ def CompleteTask():
     task_id = input()
 
     #If user has not entered the character 'C' alone, proceed
-    if task_id != 'C':
+    if task_id.lower() != 'c':
 
         for task in tasksList:
             #Find the specific task that contains the matching task id
@@ -190,8 +205,9 @@ def CompleteTask():
                     yesNo = input()
 
                     #If user has not entered the character 'C' alone and the user confirms the action, proceed
-                    if yesNo != 'C' and yesNo == 'Y':
+                    if yesNo.lower() != 'c' and yesNo.lower() == 'y':
                             task['completed'] = True
+                            print(tasksList)
                             write_Json("Update", None, None)
     menu()
 
@@ -206,7 +222,7 @@ def RemoveTask():
     task_id = input()
 
     #If user has not entered the character 'C' alone, proceed
-    if task_id != 'C':
+    if task_id.lower() != 'c':
 
         for task in tasksList:
             #Find the specific task that contains the matching task id
@@ -219,7 +235,7 @@ def RemoveTask():
                 yesNo = input()
 
                 #If the user has not entered the character 'C' alone and confirms the action, proceed
-                if yesNo != "C" and yesNo == "Y":
+                if yesNo.lower() != 'c' and yesNo.lower() == 'y':
                     write_Json("Delete", None, task)
 
     menu()
@@ -243,16 +259,26 @@ def menu():
    ##while True:
     inputSel = input()
     if inputSel == "1":
-        ViewTasks()
+        print("Tasks List length: " + str(len(tasksList)))
+        if len(tasksList) > 0:
+            ViewTasks()
+        else:
+            printError("There are currently no tasks in the List. Add a new task to get started!")
     elif inputSel == "2":
         AddTask()
     elif inputSel == "3":
         CompleteTask()
     elif inputSel == "4":
         RemoveTask()
+    elif inputSel == "5":
+        print("---------")
+        print("Goodbye!")
+        print("----------")
+        exit()
     else:
         printError("Entered Option is invalid. Please enter a valid option (1-5)")
-        menu()
+    
+    menu()
 
 
 menu()
