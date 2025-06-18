@@ -1,22 +1,6 @@
 {
     "Tasks": [
         {
-            "id": 3,
-            "description": "yeet these nuts",
-            "due_date": "2024-06-23",
-            "completed": false
-        },
-        {
-            "id": 4,
-            "description": "New yeeter",
-            "due_date": "2025-08-23",
-            "completed": true
-        },
-        {
-            "id": 5,
-            "description": "no yeeting here",
-            "due_date": "2025-06-23",
-            "completed": true
         }
     ]
 }
